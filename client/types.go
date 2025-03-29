@@ -650,8 +650,8 @@ type ip struct {
 			DiagnosticsState      string `json:"DiagnosticsState,omitempty"`
 			DiagnosticsStatus     string `json:"DiagnosticsStatus,omitempty"`
 			Download              string `json:"Download,omitempty"`
-			MaxDownload           string `json:"MaxDownload,omitempty"`
-			MaxUpload             string `json:"MaxUpload,omitempty"`
+			MaxDownload           float64`json:"MaxDownload,omitempty"`
+			MaxUpload             float64`json:"MaxUpload,omitempty"`
 			SelectedServerAddress string `json:"SelectedServerAddress,omitempty"`
 			ServerList            string `json:"ServerList,omitempty"`
 			Upload                string `json:"Upload,omitempty"`
@@ -719,14 +719,14 @@ type ip struct {
 			Interface                   string `json:"Interface,omitempty"`
 			ProtocolVersion             string `json:"ProtocolVersion,omitempty"`
 			AverageResponseTime         int    `json:"AverageResponseTime,omitempty"`
-			AverageResponseTimeDetailed int    `json:"AverageResponseTimeDetailed,omitempty"`
+			AverageResponseTimeDetailed string `json:"AverageResponseTimeDetailed,omitempty"`
 			Dscp                        int    `json:"DSCP,omitempty"`
 			DataBlockSize               int    `json:"DataBlockSize,omitempty"`
 			FailureCount                int    `json:"FailureCount,omitempty"`
 			MaximumResponseTime         int    `json:"MaximumResponseTime,omitempty"`
-			MaximumResponseTimeDetailed int    `json:"MaximumResponseTimeDetailed,omitempty"`
+			MaximumResponseTimeDetailed string `json:"MaximumResponseTimeDetailed,omitempty"`
 			MinimumResponseTime         int    `json:"MinimumResponseTime,omitempty"`
-			MinimumResponseTimeDetailed int    `json:"MinimumResponseTimeDetailed,omitempty"`
+			MinimumResponseTimeDetailed string `json:"MinimumResponseTimeDetailed,omitempty"`
 			NumberOfRepetitions         int    `json:"NumberOfRepetitions,omitempty"`
 			SuccessCount                int    `json:"SuccessCount,omitempty"`
 			Timeout                     int    `json:"Timeout,omitempty"`
@@ -2935,7 +2935,7 @@ func parseTimestamp(s string) (time.Time, error) {
 		return time.Time{}, nil
 	}
 
-	if strings.HasPrefix(s, "0-") {
+	if strings.HasPrefix(s, "0-") || strings.HasPrefix(s, "1-") {
 		// special-case for year 0
 		s = "000" + s
 	}
