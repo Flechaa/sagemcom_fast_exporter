@@ -2691,6 +2691,14 @@ type DeviceInfo struct {
 		Free  int `json:"Free,omitempty"`
 		Total int `json:"Total,omitempty"`
 	} `json:"MemoryStatus,omitempty"`
+	ProcessStatus struct {
+                CPUUsage int `json:"CPUUsage,omitempty"`
+              	LoadAverage struct {
+		       Load1 float64 `json:"Load1,omitempty"`
+                       Load5 float64 `json:"Load5,omitempty"`
+                       Load15 float64 `json:"Load15,omitempty"`
+               } `json:"LoadAverage,omitempty"`
+        } `json:"ProcessStatus,omitempty"`
 	ResetStatus               int  `json:"ResetStatus,omitempty"`
 	RebootStatus              int  `json:"RebootStatus,omitempty"`
 	UpTime                    int  `json:"UpTime,omitempty"`
