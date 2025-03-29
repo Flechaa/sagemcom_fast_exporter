@@ -34,6 +34,10 @@ type sysMetrics struct {
 	uptime           *typedDesc
 	memoryFreeBytes  *typedDesc
 	memoryTotalBytes *typedDesc
+	cpuUsage         *typedDesc
+        loadAverage      *typedDesc
+        loadAverage5     *typedDesc
+        loadAverage15    *typedDesc
 	lastCrashDate    *typedDesc
 	rebootCount      *typedDesc
 
@@ -391,6 +395,10 @@ func initSysMetrics(ns string) sysMetrics {
 		uptime:           gauge("uptime_seconds", "System uptime (seconds)"),
 		memoryFreeBytes:  gauge("memory_free_bytes", "Free memory available to the system"),
 		memoryTotalBytes: gauge("memory_total_bytes", "Total memory available to the system"),
+		cpuUsage:        gauge("cpu_usage", "CPU usage (percentage)"),
+                loadAverage:     gauge("load_average", "Load average"),
+                loadAverage5:    gauge("load_average_5", "Load average (5 minutes)"),
+                loadAverage15:   gauge("load_average_15", "Load average (15 minutes)"),
 		lastCrashDate:    gauge("last_crash_date_timestamp", "Timestamp of the last crash"),
 		rebootCount:      gauge("reboot_count", "Number of reboots"),
 		info: &typedDesc{
@@ -571,15 +579,15 @@ func (c *collector) update(ctx context.Context, ch chan<- prometheus.Metric) err
 
 	slog.DebugContext(ctx, "getting resource usage")
 
-	r, err := c.scraper.GetResourceUsage(ctx)
-	if err != nil {
-		slog.ErrorContext(ctx, "update getResourceUsage errored", "err", err)
+	// r, err := c.scraper.GetResourceUsage(ctx)
+	// if err != nil {
+	//	slog.ErrorContext(ctx, "update getResourceUsage errored", "err", err)
 
-		return fmt.Errorf("getResourceUsage: %w", err)
-	}
+	//	return fmt.Errorf("getResourceUsage: %w", err)
+	// }
 
-	slog.DebugContext(ctx, "got resources, updating metrics")
-	c.updateResources(ch, r)
+	// slog.DebugContext(ctx, "got resources, updating metrics")
+	// c.updateResources(ch, r)
 
 	d := v.Device
 
@@ -790,6 +798,12 @@ func (c *collector) updateSys(ch chan<- prometheus.Metric, di client.DeviceInfo)
 	// memory is in KiB, convert to bytes
 	ch <- recordNum(m.memoryFreeBytes, di.MemoryStatus.Free*1024)
 	ch <- recordNum(m.memoryTotalBytes, di.MemoryStatus.Total*1024)
+
+	ch <- recordNum(m.cpuUsage, float64(di.ProcessStatus.CPUUsage)/100)
+
+        ch <- recordNum(m.loadAverage, di.ProcessStatus.LoadAverage.Load1)
+        ch <- recordNum(m.loadAverage5, di.ProcessStatus.LoadAverage.Load5)
+        ch <- recordNum(m.loadAverage15, di.ProcessStatus.LoadAverage.Load15)
 
 	ch <- recordNum(m.info, 1, []string{
 		di.AdditionalHardwareVersion,
